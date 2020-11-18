@@ -2,22 +2,21 @@
 #include<winsock2.h>
 
 #pragma comment(lib,"ws2_32.lib") //Winsock Library
+#pragma warning(disable:4996) 
 
 #define BUFLEN 512	//Max length of buffer
+#define CLIENT "127.0.0.1"	//ip address of udp server
 #define PORT 2010	//The port on which to listen for incoming data
 
 int main()
 {
+	
 	SOCKET s;
-	struct sockaddr_in server, si_other;
-	int slen, recv_len;
-	char buf[BUFLEN];
+	struct sockaddr_in server;
 	WSADATA wsa;
 
-	slen = sizeof(si_other);
-
 	//Initialise winsock
-	printf("\nInitialising Winsock...");
+	printf("Initialising Winsock...\n");
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 	{
 		printf("Failed. Error Code : %d", WSAGetLastError());
@@ -45,24 +44,18 @@ int main()
 	}
 	puts("Bind done");
 
+	struct sockaddr_in clientAddress;
+	memset((char*)&clientAddress, 0, sizeof(clientAddress));
+	clientAddress.sin_family = AF_INET;
+	clientAddress.sin_addr.S_un.S_addr = htonl(INADDR_LOOPBACK);
+	clientAddress.sin_port = htons(PORT);
+	int slen = sizeof(clientAddress);
+	char buf[BUFLEN] = "Hello";
 	//keep listening for data
 	while (1)
 	{
-		printf("Waiting for data...");
-		fflush(stdout);
-
-		//clear the buffer by filling null, it might have previously received data
-		memset(buf, '\0', BUFLEN);
-
-		//try to receive some data, this is a blocking call
-		if ((recv_len = recvfrom(s, buf, BUFLEN, 0, (struct sockaddr*)&si_other, &slen)) == SOCKET_ERROR)
-		{
-			printf("recvfrom() failed with error code : %d", WSAGetLastError());
-			exit(EXIT_FAILURE);
-		}
-
 		//now reply the client with the same data
-		if (sendto(s, buf, recv_len, 0, (struct sockaddr*)&si_other, slen) == SOCKET_ERROR)
+		if (sendto(s, buf, strlen(buf), 0, (struct sockaddr*)&clientAddress, slen) == SOCKET_ERROR)
 		{
 			printf("sendto() failed with error code : %d", WSAGetLastError());
 			exit(EXIT_FAILURE);

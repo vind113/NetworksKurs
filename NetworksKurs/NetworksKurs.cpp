@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
+#include "NetworksKurs.h"
 
 using namespace std;
 
@@ -50,8 +51,9 @@ void consoleAndFileWrite(string text, string path) {
 }
 
 // B - повідомлення виводиться у файл.
-void fileWrite(string text, string path) {
-    ofstream outputFileStream(path);
+void fileWrite(std::string text, std::string path) {
+    std::ofstream outputFileStream;
+    outputFileStream.open(path, std::ios_base::app);
     outputFileStream << text;
     outputFileStream.close();
 }
