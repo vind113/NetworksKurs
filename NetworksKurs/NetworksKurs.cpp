@@ -4,16 +4,16 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-#include "NetworksKurs.h"
 
 using namespace std;
 
 // -------------------------------------------------------- Введення ----------------------------------------------------------
 // A - повідомлення вводиться з клавіатури.
 string readConsole() {
-    string input;
-    getline(cin, input, ';');
-    return input;
+    std::cout << "Enter text(ending with new line):\n";
+    std::string input;
+    std::getline(std::cin, input);
+    return input + "\n";
 }
 
 // B - повідомлення зчитується з файлу.
@@ -67,7 +67,5 @@ void consoleWrite(string text) {
 
 int main()
 {
-    string path = "file.txt";
-    fileWrite("Hello from file", path);
-    consoleWrite(readFile(path));
+    std::cout << "Hello world!";
 }
